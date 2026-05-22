@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React from "react";
 import {
   HashRouter,
   Routes,
@@ -8,11 +8,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import FacturasPage from "../pages/FacturasPage";
-import FacturaPreviewPage from "../pages/FacturaPreviewPage";
-import PresupuestosPage from "../pages/PresupuestosPage";
-import PresupuestoPreviewPage from "../pages/PresupuestoPreviewPage";
-
+import DocumentoPage from "../pages/DocumentoPage";
+import PreviewPage from "../pages/PreviewPage";
+import HistorialPage from "../pages/HistorialPage";
 import logo from "../assets/logo constructora.png";
 
 export default function AppShell() {
@@ -27,27 +25,12 @@ function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const currentTab = useMemo(() => {
-    if (location.pathname.startsWith("/presupuestos")) return "PRESUPUESTOS";
-    return "FACTURAS";
-  }, [location.pathname]);
-
-  const [tab, setTab] = useState(currentTab);
-
-  useEffect(() => {
-    setTab(currentTab);
-  }, [currentTab]);
-
-  const goTab = (nextTab) => {
-    setTab(nextTab);
-    if (nextTab === "FACTURAS") navigate("/facturas");
-    else navigate("/presupuestos");
-  };
-
-  //  detecta preview en ambos módulos
   const isPreview =
     location.pathname.startsWith("/facturas/preview") ||
     location.pathname.startsWith("/presupuestos/preview");
+  const activeTab = location.pathname.startsWith("/historial")
+    ? "HISTORIAL"
+    : "EMISION";
 
   return (
     <div style={styles.app}>
@@ -63,25 +46,24 @@ function AppLayout() {
 
         <nav style={styles.nav}>
           <button
-            onClick={() => goTab("FACTURAS")}
+            onClick={() => navigate("/emision")}
             style={{
               ...styles.navItem,
-              ...(tab === "FACTURAS" ? styles.navItemActive : {}),
+              ...(activeTab === "EMISION" ? styles.navItemActive : {}),
             }}
           >
-            <i className="bi bi-receipt" style={{ marginRight: 8 }} />
-            Facturas
+            <i className="bi bi-send-check" style={{ marginRight: 8 }} />
+            Emisión
           </button>
-
           <button
-            onClick={() => goTab("PRESUPUESTOS")}
+            onClick={() => navigate("/historial")}
             style={{
               ...styles.navItem,
-              ...(tab === "PRESUPUESTOS" ? styles.navItemActive : {}),
+              ...(activeTab === "HISTORIAL" ? styles.navItemActive : {}),
             }}
           >
-            <i className="bi bi-file-earmark-text" style={{ marginRight: 8 }} />
-            Presupuestos
+            <i className="bi bi-clock-history" style={{ marginRight: 8 }} />
+            Historial
           </button>
         </nav>
       </aside>
@@ -91,38 +73,28 @@ function AppLayout() {
           <div>
             <h1 style={styles.h1}>Sistema de Facturación</h1>
             <p style={styles.subtitle}>
-              CONSTRUCCIONES Y REFORMAS R.J. — Documentos listos para imprimir en
-              PDF
+              CONSTRUCCIONES Y REFORMAS R.J. - Documentos listos para imprimir en PDF
             </p>
           </div>
           <div style={styles.badge}>
-            {tab === "FACTURAS" ? "FACTURAS" : "PRESUPUESTOS"}
+            {activeTab === "HISTORIAL" ? "HISTORIAL" : "EMISIÓN"}
           </div>
         </header>
 
-        <div
-          style={{
-            ...styles.content,
-            padding: isPreview ? 0 : 18,
-          }}
-        >
-          {/*  wrapper flex para que preview estire bien */}
+        <div style={{ ...styles.content, padding: isPreview ? 0 : 18 }}>
           <div style={{ flex: 1, minWidth: 0, minHeight: 0, display: "flex" }}>
             <Routes>
-              <Route path="/" element={<Navigate to="/facturas" replace />} />
+              <Route path="/" element={<Navigate to="/emision" replace />} />
+              <Route path="/emision" element={<DocumentoPage />} />
+              <Route path="/historial" element={<HistorialPage />} />
 
-              {/* FACTURAS */}
-              <Route path="/facturas" element={<FacturasPage />} />
-              <Route path="/facturas/preview" element={<FacturaPreviewPage />} />
+              <Route path="/facturas" element={<Navigate to="/emision" replace />} />
+              <Route path="/presupuestos" element={<Navigate to="/emision" replace />} />
 
-              {/*  PRESUPUESTOS */}
-              <Route path="/presupuestos" element={<PresupuestosPage />} />
-              <Route
-                path="/presupuestos/preview"
-                element={<PresupuestoPreviewPage />}
-              />
+              <Route path="/facturas/preview" element={<PreviewPage tipo="FACTURA" />} />
+              <Route path="/presupuestos/preview" element={<PreviewPage tipo="PRESUPUESTO" />} />
 
-              <Route path="*" element={<Navigate to="/facturas" replace />} />
+              <Route path="*" element={<Navigate to="/emision" replace />} />
             </Routes>
           </div>
         </div>
@@ -226,5 +198,7 @@ const styles = {
     minWidth: 0,
     minHeight: 0,
     overflow: "auto",
+    display: "flex",
+    flexDirection: "column",
   },
 };

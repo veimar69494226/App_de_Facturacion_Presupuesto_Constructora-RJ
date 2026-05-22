@@ -20,7 +20,7 @@ function emptyPresupuesto() {
       telefono: "626120538",
       email: "ramirojimenezvargas26@gmail.com",
       direccion: "Murcia – Mazarrón",
-      nif: "61367222UW",
+      nif: "61367222W",
     },
 
     //  Presupuesto: solo nombre/razón social / contacto (opcional)

@@ -20,7 +20,9 @@
   "dependencies": {
     "@react-pdf/renderer": "^4.3.2",
     "bootstrap-icons": "^1.13.1",
+    "dictionary-es": "^4.0.0",
     "lucide-react": "^0.564.0",
+    "nspell": "^2.1.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0"
@@ -54,6 +56,9 @@
     "files": [
       "dist/**",
       "src/electron/**",
+      "node_modules/dictionary-es/**",
+      "node_modules/nspell/**",
+      "node_modules/is-buffer/**",
       "package.json"
     ],
     "extraMetadata": {
